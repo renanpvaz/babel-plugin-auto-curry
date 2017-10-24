@@ -17,10 +17,6 @@ const buildGloalCurryFunction = template(`
   }
 `)
 
-// const hasNoComposition = path =>
-//     !!path.findParent(({ node }) =>
-//         node.directives && node.directives.some(({ value }) => value.value === 'no composition'));
-
 export default ({ types: t }) =>  {
   const isArrowFunctionNode = node =>
     node.body.type === 'ArrowFunctionExpression'
@@ -64,10 +60,7 @@ export default ({ types: t }) =>  {
          path.scope.references[globalCurryName]
        ) return
 
-       const declar = buildGloalCurryFunction()
-       declar._blockHoist = 3
-
-       getProgram(path).unshiftContainer('body', [declar])
+       getProgram(path).unshiftContainer('body', [buildGloalCurryFunction()])
       }
     }
   }
