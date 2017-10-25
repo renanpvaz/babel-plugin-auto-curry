@@ -13,9 +13,9 @@ const mult3 = a => b => c => a * b * c
 Turn into
 
 ```javascript
-const add = _curry((x, y) => x + y)
+const add = _curry(2, (x, y) => x + y)
 
-const mult3 = _curry((a, b, c) => a * b * c)
+const mult3 = _curry(3, (a, b, c) => a * b * c)
 ```
 ## Disabling
 
