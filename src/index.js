@@ -3,10 +3,10 @@ import template from 'babel-template'
 const globalCurryName = '_curry'
 
 const buildGloalCurryFunction = template(`
-  function ${globalCurryName}(fn) {
+  function ${globalCurryName}(arity, fn) {
     return function ${globalCurryName}Fn() {
       var params = Array.prototype.slice.call(arguments);
-      if (params.length >= fn.length) {
+      if (params.length >= arity) {
         return fn.apply(this, params);
       }
       return function ${globalCurryName}() {
@@ -17,11 +17,28 @@ const buildGloalCurryFunction = template(`
   }
 `)
 
+// const buildGloalCurryFunction = template(`
+//   function ${globalCurryName}(arity, fn) {
+//     var curried = function (oldArgs) {
+//       return function innerCurry() {
+//         const newArgs = Array.prototype.slice.call(arguments)
+//         const allArgs  = oldArgs.concat(newArgs);
+//
+//         return allArgs.length < arity
+//           ? curried(allArgs)
+//           : fn.apply(null, allArgs);
+//       }
+//     };
+//
+//     return curried([]);
+//   }
+// `)
+
 export default ({ types: t }) =>  {
   const isArrowFunctionNode = node =>
     node.body.type === 'ArrowFunctionExpression'
 
-  const getProgram = (path) => t.isProgram(path.node)
+  const getProgram = path => t.isProgram(path.node)
     ? path
     : getProgram(path.parentPath)
 
@@ -44,10 +61,13 @@ export default ({ types: t }) =>  {
           !isArrowFunctionNode(node)
         ) return
 
+        const arrowFunction = uncurry(node)
+        const arity = arrowFunction.params.length
+
         path.replaceWith(
           t.callExpression(
             t.identifier(globalCurryName),
-            [uncurry(node)]
+            [t.numericLiteral(arity), arrowFunction]
           )
         )
       },

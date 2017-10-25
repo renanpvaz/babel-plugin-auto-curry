@@ -1,8 +1,8 @@
-function _curry(fn) {
+function _curry(arity, fn) {
   return function _curryFn() {
     var params = Array.prototype.slice.call(arguments);
 
-    if (params.length >= fn.length) {
+    if (params.length >= arity) {
       return fn.apply(this, params);
     }
 
@@ -13,4 +13,4 @@ function _curry(fn) {
   };
 }
 
-const add = _curry((a, b) => a + b);
+const add = _curry(2, (a, b) => a + b);
