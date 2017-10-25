@@ -17,6 +17,9 @@ const add = _curry((x, y) => x + y)
 
 const mult3 = _curry((a, b, c) => a * b * c)
 ```
+## Disabling
+
+To leave your functions uncurried you have to either use the 'no auto-curry' directive or simply define your arrow functions with multiple arguments at once.
 
 ## Installation
 

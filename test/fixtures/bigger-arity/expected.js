@@ -14,4 +14,3 @@ function _curry(arity, fn) {
 }
 
 const add3 = _curry(3, (a, b, c) => a + b + c);
-const mult5 = _curry(5, (a, b, c, d, e) => a * b * c * d * e);

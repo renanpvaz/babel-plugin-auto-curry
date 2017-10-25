@@ -17,27 +17,21 @@ const buildGloalCurryFunction = template(`
   }
 `)
 
-// const buildGloalCurryFunction = template(`
-//   function ${globalCurryName}(arity, fn) {
-//     var curried = function (oldArgs) {
-//       return function innerCurry() {
-//         const newArgs = Array.prototype.slice.call(arguments)
-//         const allArgs  = oldArgs.concat(newArgs);
-//
-//         return allArgs.length < arity
-//           ? curried(allArgs)
-//           : fn.apply(null, allArgs);
-//       }
-//     };
-//
-//     return curried([]);
-//   }
-// `)
+const hasDirective = node => !!(
+  node.directives &&
+  node.directives.some(({ value }) =>
+    value.value === 'no auto-curry'
+  )
+)
+
+const isDisabled = path => !!path.findParent(
+  ({ node }) => hasDirective(node)
+)
+
+const isArrowFunctionNode = node =>
+  node.body.type === 'ArrowFunctionExpression'
 
 export default ({ types: t }) =>  {
-  const isArrowFunctionNode = node =>
-    node.body.type === 'ArrowFunctionExpression'
-
   const getProgram = path => t.isProgram(path.node)
     ? path
     : getProgram(path.parentPath)
@@ -58,7 +52,8 @@ export default ({ types: t }) =>  {
 
         if (
           !path.isArrowFunctionExpression() ||
-          !isArrowFunctionNode(node)
+          !isArrowFunctionNode(node) ||
+          isDisabled(path)
         ) return
 
         const arrowFunction = uncurry(node)
