@@ -28,7 +28,7 @@ To leave your functions uncurried you have to either use the 'no auto-curry' dir
 $ npm install --save-dev babel-plugin-auto-curry
 ```
 
-## Usage (not published yet)
+## Usage
 
 ### Via `.babelrc` (Recommended)
 
