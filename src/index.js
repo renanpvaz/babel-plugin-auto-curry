@@ -47,7 +47,7 @@ export default ({ types: t }) =>  {
 
   return {
     visitor: {
-      ArrowFunctionExpression(path) {
+      ArrowFunctionExpression(path, { opts }) {
         const { node } = path
 
         if (
@@ -61,16 +61,17 @@ export default ({ types: t }) =>  {
 
         path.replaceWith(
           t.callExpression(
-            t.identifier(globalCurryName),
+            t.identifier(opts.curryFunction || globalCurryName),
             [t.numericLiteral(arity), arrowFunction]
           )
         )
       },
 
-      CallExpression(path) {
+      CallExpression(path, { opts }) {
        const { node } = path
 
        if (
+         opts.curryFunction ||
          node.callee.name !== globalCurryName ||
          path.scope.references[globalCurryName]
        ) return
